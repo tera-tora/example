@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .calculator {
+            width: 260px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .display {
+            text-align: right;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+            height: 40px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 5px;
+            background-color: #e9e9e9;
+        }
+        .display.negative {
+            color: red;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+        }
+        button {
+            font-size: 1em;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .number {
+            background-color: #dcdcdc;
+        }
+        .operator {
+            background-color: #b0b0b0;
+        }
+        .equals {
+            grid-column: span 2;
+            background-color: #4CAF50;
+            color: white;
+        }
+        .function {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div id="display" class="display">0</div>
+        <div class="buttons">
+            <button class="function" onclick="clearDisplay()">C</button>
+            <button class="operator">(</button>
+            <button class="operator">)</button>
+            <button class="operator">/</button>
+
+            <button class="number">7</button>
+            <button class="number">8</button>
+            <button class="number">9</button>
+            <button class="operator">*</button>
+
+            <button class="number">4</button>
+            <button class="number">5</button>
+            <button class="number">6</button>
+            <button class="operator">-</button>
+
+            <button class="number">1</button>
+            <button class="number">2</button>
+            <button class="number">3</button>
+            <button class="operator">+</button>
+
+            <button class="number">0</button>
+            <button class="number">.</button>
+            <button class="operator" onclick="calculatePercentage()">%</button>
+            <button class="equals" onclick="calculate()">=</button>
+
+            <button class="function" onclick="copyToClipboard()">Copy</button>
+        </div>
+    </div>
+
+    <script>
+        let calculation = '0';
+        let resultShown = false;
+        const display = document.getElementById('display');
+        
+        function updateDisplay() {
+            display.textContent = calculation;
+            display.classList.toggle('negative', parseFloat(calculation) < 0);
+        }
+        
+        document.querySelectorAll('.number, .operator:not([onclick])').forEach(button => {
+            button.addEventListener('click', () => {
+                if (resultShown) {
+                    calculation = '';
+                    resultShown = false;
+                }
+                if (calculation === '0') calculation = '';
+                calculation += button.textContent;
+                updateDisplay();
+            });
+        });
+        
+        function calculate() {
+            try {
+                calculation = eval(calculation).toString();
+                resultShown = true;
+            } catch {
+                calculation = 'Error';
+                resultShown = false;
+            }
+            updateDisplay();
+        }
+
+        function calculatePercentage() {
+            try {
+                calculation = (parseFloat(calculation) / 100).toString();
+            } catch {
+                calculation = 'Error';
+            }
+            updateDisplay();
+        }
+        
+        function clearDisplay() {
+            calculation = '0';
+            resultShown = false;
+            updateDisplay();
+        }
+        
+        function copyToClipboard() {
+            navigator.clipboard.writeText(calculation);
+            alert('Result copied to clipboard');
+        }
+        
+        updateDisplay();
+    </script>
+</body>
+</html>
